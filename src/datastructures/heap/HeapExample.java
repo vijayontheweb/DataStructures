@@ -8,6 +8,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
+ * A heap is a (weakly ordered) binary tree that can be used to implement a
+ * priority queue. It offers both insertion and deletion in O(logN) time. Thus,
+ * it’s not quite as fast for deletion, but much faster for insertion. It’s the
+ * method of choice for implementing priority queues where speed is important
+ * and there will be many insertions. It has the following characteristics
+ * 
+ * 1)It is complete. This means it’s completely filled in, reading from left to
+ * right across each row, although the last row need not be full.
+ * 
+ * 2)It’s (usually) implemented as an array.
+ * 
+ * 3)Each node in a heap satisfies the heap condition, which states that every
+ * node’s key is larger than (or equal to) the keys of its children.
+ * 
  * @author vshanmughada
  *
  */
@@ -106,6 +120,20 @@ class Heap {
 		currentSize = 0;
 	}
 
+	/**
+	 * Insertion uses trickle up, rather than trickle down.Initially, the node
+	 * to be inserted is placed in the first open position at the end of the
+	 * array, increasing the array size by one. The problem is that it’s likely
+	 * that this will destroy the heap condition. This happens if the new node’s
+	 * key is larger than its newly acquired parent. Because this parent is on
+	 * the bottom of the heap, it’s likely to be small, so the new node is
+	 * likely to be larger. Thus, the new node will usually need to be trickled
+	 * upward until it’s below a node with a larger key and above a node with a
+	 * smaller key.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	boolean insert(int key) {
 		if (currentSize == maxSize) {
 			System.out.println("Array is full. Cannot insert Node !!");
@@ -119,6 +147,15 @@ class Heap {
 		}
 	}
 
+	/**
+	 * The trickle-up algorithm is somewhat simpler than trickling down because
+	 * two children don’t need to be compared. A node has only one parent, and
+	 * the target node is simply swapped with its parent. The final correct
+	 * position for the new node might be the root, sometimes a new node can
+	 * also end up at an intermediate level.
+	 * 
+	 * @param index
+	 */
 	void trickleUp(int index) {
 		Node currentNode = heapArray[index];
 		while (index > 0) {
@@ -133,6 +170,26 @@ class Heap {
 		heapArray[index] = currentNode;
 	}
 
+	/**
+	 * Removal means removing the node with the maximum key. This node is always
+	 * the root, so removing it is easy. The problem is that once the root is
+	 * gone, the tree is no longer complete; there’s an empty cell. This “hole”
+	 * must be filled in. We could shift all the elements in the array down one
+	 * cell, but there’s a much faster approach. Here are the steps for removing
+	 * the maximum node:
+	 * 
+	 * 1) Remove the root.
+	 * 
+	 * 2) Move the last node into the root.
+	 * 
+	 * 3) Trickle the last node down until it’s below a larger node and above a
+	 * smaller one. To trickle (the terms bubble or percolate are also used) a
+	 * node up or down means to move it along a path step by step, swapping it
+	 * with the node ahead of it, checking at each step to see whether it’s in
+	 * its proper position.
+	 * 
+	 * @return Node
+	 */
 	Node remove() {
 		if (currentSize == 0) {
 			System.out.println("Cannot remove Node from empty Array");
@@ -144,6 +201,14 @@ class Heap {
 		return nodeToRemove;
 	}
 
+	/**
+	 * At each position of the target node the trickle-down algorithm checks
+	 * which child is larger. It then swaps the target node with the larger
+	 * child. If it tried to swap with the smaller child, that child would
+	 * become the parent of a larger child, which violates the heap condition.
+	 * 
+	 * @param index
+	 */
 	void trickleDown(int index) {
 		Node currentNode = heapArray[index];
 		while (index < currentSize / 2) {
@@ -174,6 +239,15 @@ class Heap {
 		}
 	}
 
+	/**
+	 * It’s possible to change the priority of an existing node. If the node’s
+	 * priority is raised, it will trickle upward to a new position. If the
+	 * priority is lowered, the node will trickle downward.
+	 * 
+	 * @param index
+	 * @param newKey
+	 * @return
+	 */
 	boolean change(int index, int newKey) {
 		if (index < 0 || index >= currentSize)
 			return false;
