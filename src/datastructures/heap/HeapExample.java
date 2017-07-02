@@ -43,27 +43,27 @@ public class HeapExample {
 		heap.insert(90);
 		heap.insert(75);
 		heap.insert(10);
-		heap.displayTree();
+		heap.displayHeap();
 		char isContinue = 'N';
 		do {
 			System.out.println("\nEnter the following choice - S(Show) I(Insert) R(Remove) C(Change)");
 			char choice = getChar();
 			switch (choice) {
 			case 'S':
-				heap.displayTree();
+				heap.displayHeap();
 				break;
 			case 'I':
 				System.out.println("Enter the number to insert..");
 				int number = getInt();
 				heap.insert(number);
 				System.out.println("Revised list of elements - After Inserting " + number);
-				heap.displayTree();
+				heap.displayHeap();
 				break;
 			case 'R':
 				Node removedNode = heap.remove();
 				System.out.println("Removed number is " + removedNode.getKey());
 				System.out.println("Revised list of elements - After Removing " + removedNode.getKey());
-				heap.displayTree();
+				heap.displayHeap();
 				break;
 			case 'C':
 				System.out.println("Enter the index where number needs to change..");
@@ -72,7 +72,7 @@ public class HeapExample {
 				number = getInt();
 				heap.change(index, number);
 				System.out.println("Revised list of elements - After Changing..");
-				heap.displayTree();
+				heap.displayHeap();
 				break;
 			default:
 				System.out.println("Invalid Entry !!");
@@ -118,10 +118,10 @@ class Heap {
 		this.maxSize = maxSize;
 		heapArray = new Node[maxSize];
 		currentSize = 0;
-	}
+	}	
 
 	/**
-	 * Insertion uses trickle up, rather than trickle down.Initially, the node
+	 * Insertion uses trickle up, rather than trickle down. Initially, the node
 	 * to be inserted is placed in the first open position at the end of the
 	 * array, increasing the array size by one. The problem is that it’s likely
 	 * that this will destroy the heap condition. This happens if the new node’s
@@ -196,8 +196,8 @@ class Heap {
 		}
 		Node nodeToRemove = heapArray[0];
 		heapArray[0] = heapArray[currentSize - 1];
-		trickleDown(0);
 		currentSize--;
+		trickleDown(0);
 		return nodeToRemove;
 	}
 
@@ -212,9 +212,12 @@ class Heap {
 	void trickleDown(int index) {
 		Node currentNode = heapArray[index];
 		while (index < currentSize / 2) {
-			Node leftChild = heapArray[(index * 2) + 1];
-			Node rightChild = heapArray[(index * 2) + 2];
-			if (rightChild.getKey() > leftChild.getKey()) {
+			Node leftChild, rightChild = null;
+			leftChild = heapArray[(index * 2) + 1];
+			if ((index * 2) + 2 < currentSize) {
+				rightChild = heapArray[(index * 2) + 2];
+			}
+			if (rightChild != null && rightChild.getKey() > leftChild.getKey()) {
 				if (currentNode.getKey() < rightChild.getKey()) {
 					heapArray[index] = rightChild;
 					index = (index * 2) + 2;
@@ -233,9 +236,9 @@ class Heap {
 		heapArray[index] = currentNode;
 	}
 
-	void displayTree() {
+	void displayHeap() {
 		for (int index = 0; index < currentSize; index++) {
-			System.out.print(heapArray[index].getKey() + "		");
+			System.out.print(heapArray[index].getKey() + "	");
 		}
 	}
 
@@ -258,6 +261,56 @@ class Heap {
 		else
 			trickleDown(index);
 		return true;
+	}
+	
+	/**
+	 * DISCLAIMER : Not an inherent(vanilla) method. This is a helper method for
+	 * improving time and space complexity in HeapSort. This method allows
+	 * direct insertion into the heap’s array
+	 * 
+	 * @param index
+	 * @param newNode
+	 */
+	public void insertAt(int index, Node newNode) {
+		heapArray[index] = newNode;
+	}
+
+	/**
+	 * DISCLAIMER : Not an inherent(vanilla) method. This is a helper method for
+	 * improving space complexity in HeapSort. Each time an item is removed from
+	 * the heap, an element at the end of the heap array becomes empty; the heap
+	 * shrinks by one. We can put the recently removed item in this newly freed
+	 * cell. As more items are removed, the heap array becomes smaller and
+	 * smaller, while the array of ordered data becomes larger and larger. Thus,
+	 * with a little planning, it’s possible for the ordered array and the heap
+	 * array to share the same space.
+	 * 
+	 * @param index
+	 * @param newNode
+	 */
+	void removeAndFeedBack() {
+		for (int index = currentSize - 1; index >= 0; index--) {
+			Node nodeRemoved = remove();
+			// feed from behind back to the heap Array
+			heapArray[index] = nodeRemoved;
+		}
+	}
+
+	/**
+	 * DISCLAIMER : Not an inherent(vanilla) method. This is a helper method for
+	 * improving space complexity in HeapSort.it’s possible for the ordered
+	 * array and the heap array to share the same space. See 'removeAndFeedBack'
+	 * method. Therefore in order to display an ordered Array we display the
+	 * Heap Array instead
+	 */
+	void displayHeapArray() {
+		for (int index = 0; index < heapArray.length; index++) {
+			System.out.print(heapArray[index].getKey() + "	");
+		}
+	}
+
+	public void incrementSize() {
+		currentSize++;
 	}
 
 }
