@@ -48,7 +48,7 @@ public class Graph {
 		char isContinue = 'N';
 		do {
 			System.out.println(
-					"\nEnter the following choice - D(Depth First Search) B(Breadth First Search) M(Minimum Spanning Tree) M(Optimize Memory)");
+					"\nEnter the following choice - D(Depth First Search) B(Breadth First Search) M(Minimum Spanning Tree) T(Topological Sorting)");
 			char choice = getChar();
 			switch (choice) {
 			case 'D':
@@ -62,6 +62,10 @@ public class Graph {
 			case 'M':
 				initializeGraphForMST();
 				performMST();
+				break;
+			case 'T':
+				initializeGraphForTopoSort();
+				performTopoSort();
 				break;
 			default:
 				System.out.println("Invalid Entry !!");
@@ -129,6 +133,28 @@ public class Graph {
 		resetVisitHistory();
 	}
 
+	static void initializeGraphForTopoSort() {
+		Graph graph = new Graph(8);
+		graph.addVertex('A'); // 0 (start for topo sort)
+		graph.addVertex('B'); // 1
+		graph.addVertex('C'); // 2
+		graph.addVertex('D'); // 3
+		graph.addVertex('E'); // 4
+		graph.addVertex('F'); // 5
+		graph.addVertex('G'); // 6
+		graph.addVertex('H'); // 7
+		graph.addDirectedEdge(0, 3); // AD
+		graph.addDirectedEdge(0, 4); // AE
+		graph.addDirectedEdge(1, 4); // BE
+		graph.addDirectedEdge(2, 5); // CF
+		graph.addDirectedEdge(3, 6); // DG
+		graph.addDirectedEdge(4, 6); // EG
+		graph.addDirectedEdge(5, 7); // FH
+		graph.addDirectedEdge(6, 7); // GH
+
+		resetVisitHistory();
+	}
+
 	static void resetVisitHistory() {
 		for (int index = 0; index < vertexList.length; index++) {
 			vertexList[index].wasVisited = false;
@@ -179,6 +205,21 @@ public class Graph {
 		}
 	}
 
+	/**
+	 * In a directed graph you can proceed only one way along an edge. An edge
+	 * in a directed graph has only one entry in the adjacency matrix
+	 * 
+	 * @param vertexIndexA
+	 * @param vertexIndexB
+	 */
+	void addDirectedEdge(int row, int col) {
+		if (row < vertexList.length && col < vertexList.length) {
+			adjacencyMatrix[row][col] = 1;
+		} else {
+			System.out.println("Adjacency Matrix index exceeds max size");
+		}
+	}
+
 	static void displayVertex(int vertexIndex) {
 		System.out.println(vertexList[vertexIndex].label);
 	}
@@ -224,7 +265,7 @@ public class Graph {
 			}
 		}
 	}
-	
+
 	static int getAdjacentUnvisitedVertex(int currentVertex) {
 		for (int col = 0; col < vertexCount; col++) {
 			if (adjacencyMatrix[currentVertex][col] == 1 && !vertexList[col].wasVisited) {
@@ -288,7 +329,64 @@ public class Graph {
 				System.out.print(vertexList[adjVertex].label + "	");
 			}
 		}
-	}	
+	}
+
+	static void performTopoSort() {
+		char[] sortArray = new char[vertexCount];
+		while (vertexCount > 0) {
+			int currentVertex = noSuccessors();
+			if (currentVertex == -1) {
+				System.out.println("Current Vertex has cycles. Program Aborted..");
+				return;
+			} else {
+				sortArray[vertexCount - 1] = vertexList[currentVertex].label;
+				deleteVertex(currentVertex);
+			}
+		}
+		System.out.println("The Topological Sorted Order is : ");
+		for (int index = 0; index < sortArray.length; index++) {
+			System.out.print(sortArray[index]);
+		}
+	}
+
+	static int noSuccessors() {
+		boolean hasSuccessor;
+		for (int row = 0; row < vertexCount; row++) {
+			hasSuccessor = false;
+			for (int col = 0; col < vertexCount; col++) {
+				if (adjacencyMatrix[row][col] == 1) {
+					hasSuccessor = true;
+					break;
+				}
+			}
+			if (!hasSuccessor) {
+				return row;
+			}
+		}
+		return -1;
+	}
+
+	static void deleteVertex(int vertexToDelete) {
+		if (vertexToDelete != vertexCount - 1) {
+			for (int index = vertexToDelete; index < vertexCount - 1; index++) {
+				vertexList[index] = vertexList[index + 1];
+			}
+			// Move Row one level up
+			for (int row = vertexToDelete; row < vertexCount - 1; row++) {
+				for (int col = 0; col < vertexCount; col++) {
+					adjacencyMatrix[row][col] = adjacencyMatrix[row + 1][col];
+				}
+
+			}
+			// move Column one level left
+			for (int col = vertexToDelete; col < vertexCount - 1; col++) {
+				for (int row = 0; row < vertexCount; row++) {
+					adjacencyMatrix[row][col] = adjacencyMatrix[row][col + 1];
+				}
+			}
+		}
+		vertexCount--;
+	}
 
 }
 
