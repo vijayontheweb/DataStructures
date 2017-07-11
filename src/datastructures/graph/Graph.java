@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 
 /**
  * Graphs are data structures rather like trees. In fact, in a mathematical
- * sense, a tree is a kind of graph. Graphs, often have a shape dictated by a
+ * sense, a tree is a kind of Graph. Graphs, often have a shape dictated by a
  * physical or abstract problem. For example, nodes in a graph may represent
  * cities, while edges may represent airline flight routes between the cities.
  * In the graph, circles represent freeway interchanges, and straight lines
