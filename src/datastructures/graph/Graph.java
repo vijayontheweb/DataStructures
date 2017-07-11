@@ -331,6 +331,43 @@ public class Graph {
 		}
 	}
 
+	/**
+	 * A graph is said to be topologically sorted when items or events must be
+	 * arranged in a specific order. In a directed graph you can proceed only
+	 * one way along an edge. An edge in a directed graph has only one entry in
+	 * the adjacency matrix. When you use an algorithm to generate a topological
+	 * sort, the approach you take and the details of the code determine which
+	 * of various valid sortings are generated. Modeling job schedules with
+	 * graphs is called critical path analysis.
+	 * 
+	 * Step 1: Find a vertex that has no successors.
+	 * 
+	 * Step 2 : Delete this vertex from the graph, and insert its label at the
+	 * beginning of a list.
+	 * 
+	 * Steps 1 and 2 are repeated until all the vertices are gone. At this
+	 * point, the list shows the vertices arranged in topological order. The
+	 * topological sorting algorithm works on unconnected graphs as well as
+	 * connected graphs. One kind of graph the topological-sort algorithm cannot
+	 * handle is a graph with cycles. It’s a path that ends up where it started.
+	 * A graph with no cycles is called a tree. In a graph, a vertex in a tree
+	 * can be connected to any number of other vertices, provided that no cycles
+	 * are created. A topological sort must be carried out on a directed graph
+	 * with no cycles. Such a graph is called a directed acyclic graph, often
+	 * abbreviated DAG.
+	 * 
+	 * The work is done in the while loop, which continues until the number of
+	 * vertices is reduced to 0. Here are the steps involved:
+	 * 
+	 * 1. Call noSuccessors() to find any vertex with no successors.
+	 * 
+	 * 2. If such a vertex is found, put the vertex label at the end of
+	 * sortedArray[] and delete the vertex from graph.
+	 * 
+	 * 3. If an appropriate vertex isn’t found, the graph must have a cycle.
+	 * 
+	 * 
+	 */
 	static void performTopoSort() {
 		char[] sortArray = new char[vertexCount];
 		while (vertexCount > 0) {
@@ -349,6 +386,17 @@ public class Graph {
 		}
 	}
 
+	/**
+	 * The noSuccessors() method uses the adjacency matrix to find a vertex with
+	 * no successors. In the outer for loop, it goes down the rows, looking at
+	 * each vertex. For each vertex, it scans across the columns in the inner
+	 * for loop, looking for a 1. If it finds one, it knows that that vertex has
+	 * a successor, because there’s an edge from that vertex to another one.
+	 * When it finds a 1, it bails out of the inner loop so that the next vertex
+	 * can be investigated.
+	 * 
+	 * @return
+	 */
 	static int noSuccessors() {
 		boolean hasSuccessor;
 		for (int row = 0; row < vertexCount; row++) {
@@ -366,6 +414,16 @@ public class Graph {
 		return -1;
 	}
 
+	/**
+	 * Deleting a vertex is straightforward except for a few details. The vertex
+	 * is removed from the vertexList[] array, and the vertices above it are
+	 * moved down to fill up the vacant position. Likewise, the row and column
+	 * for the vertex are removed from the adjacency matrix, and the rows and
+	 * columns above and to the right are moved down and to the left to fill the
+	 * vacancies.
+	 * 
+	 * @param vertexToDelete
+	 */
 	static void deleteVertex(int vertexToDelete) {
 		if (vertexToDelete != vertexCount - 1) {
 			for (int index = vertexToDelete; index < vertexCount - 1; index++) {
