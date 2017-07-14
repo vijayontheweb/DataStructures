@@ -53,7 +53,7 @@ public class WeightedGraph {
 			adjacencyMatrix[vertexIndexB][vertexIndexA] = weight;
 			edgeCount += 2;
 		} else {
-			System.out.println("Adjacency Matrix index exceeds max size");
+			System.out.println("Adjacency Matrix index exceeds max size!!");
 		}
 	}
 
@@ -175,6 +175,7 @@ public class WeightedGraph {
 			processedVertices.add(new Integer(currentVertex));
 			printVertices(processedVertices);
 		}
+		System.out.println("\nAll Vertices Processed !!");
 	}
 
 	static char getChar() {
