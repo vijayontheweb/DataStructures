@@ -25,7 +25,16 @@ import java.io.InputStreamReader;
  * @author vshanmughada
  *
  */
-public class HeapExample {
+public class Heap {
+	int maxSize;
+	Node heapArray[];
+	int currentSize;
+
+	Heap(int maxSize) {
+		this.maxSize = maxSize;
+		heapArray = new Node[maxSize];
+		currentSize = 0;
+	}	
 
 	/**
 	 * @param args
@@ -106,20 +115,8 @@ public class HeapExample {
 		}
 		return Integer.parseInt(str);
 	}
-
-}
-
-class Heap {
-	int maxSize;
-	Node heapArray[];
-	int currentSize;
-
-	Heap(int maxSize) {
-		this.maxSize = maxSize;
-		heapArray = new Node[maxSize];
-		currentSize = 0;
-	}	
-
+	
+	
 	/**
 	 * Insertion uses trickle up, rather than trickle down. Initially, the node
 	 * to be inserted is placed in the first open position at the end of the
