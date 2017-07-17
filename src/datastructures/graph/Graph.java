@@ -25,9 +25,16 @@ import java.io.InputStreamReader;
  * whether an edge is present between two vertices. If a graph has N vertices,
  * the adjacency matrix is an NxN array. adjacency list is an array of lists
  * Each individual list shows what vertices a given vertex is adjacent to.
- * 
  * Within the Graph class, vertices are identified by their index number in
- * vertexList.
+ * vertexList. Following solutions are implemented
+ * 
+ * 1) Depth First Search
+ * 
+ * 2) Breadth First Search
+ * 
+ * 3) Minimum Spanning Tree
+ * 
+ * 4) Topological Sorting
  * 
  * @author vshanmughada
  *

@@ -14,7 +14,12 @@ import java.util.List;
  * each edge. In applications, the weight may be a measure of the length of a
  * route, the capacity of a line, the energy required to move between locations
  * along a route, etc. Such graphs arise in many contexts, for example in
- * shortest path problems such as the traveling salesman problem
+ * shortest path problems such as the traveling salesman problem. Following
+ * solutions are implemented
+ * 
+ * 1) Minimum Spanning Tree with Weighted Graph
+ * 
+ * 2) Dijkstra's Algorithm a.k.a Shortest Path Problem
  * 
  * 
  * @author vshanmughada
@@ -39,7 +44,7 @@ public class WeightedGraph {
 	void initAdjMatrix() {
 		for (int row = 0; row < vertexList.length; row++) {
 			for (int col = 0; col < vertexList.length; col++) {
-				adjacencyMatrix[row][col] = 0;
+				adjacencyMatrix[row][col] = INFINITY;
 			}
 		}
 	}
@@ -68,105 +73,6 @@ public class WeightedGraph {
 			isContinue = getChar();
 		} while (isContinue == 'Y');
 
-	}
-
-	/**
-	 * To add a vertex to a graph, you make a new vertex object with new and
-	 * insert it into your vertex array, vertexList.
-	 * 
-	 * @param label
-	 */
-	void addVertex(char label) {
-		Vertex vertex = new Vertex(label);
-		vertexList[vertexCount++] = vertex;
-	}
-
-	void addWeightedEdge(int vertexIndexA, int vertexIndexB, int weight) {
-		if (vertexIndexA < vertexList.length && vertexIndexB < vertexList.length) {
-			adjacencyMatrix[vertexIndexA][vertexIndexB] = weight;
-			adjacencyMatrix[vertexIndexB][vertexIndexA] = weight;
-			edgeCount += 2;
-		} else {
-			System.out.println("Adjacency Matrix index exceeds max size!!");
-		}
-	}
-
-	void addDirectedWeightedEdge(int vertexIndexA, int vertexIndexB, int weight) {
-		if (vertexIndexA < vertexList.length && vertexIndexB < vertexList.length) {
-			adjacencyMatrix[vertexIndexA][vertexIndexB] = weight;
-			edgeCount += 1;
-		} else {
-			System.out.println("Adjacency Matrix index exceeds max size!!");
-		}
-	}
-
-	void printMinSpanTree(List<Edge> minSpanTreeList) {
-		System.out.print("Weighted Minimum Spanning Tree list -> ");
-		for (Edge edge : minSpanTreeList) {
-			char beginLabel = vertexList[edge.getBeginVertex()].label;
-			char endLabel = vertexList[edge.getEndVertex()].label;
-			int weight = adjacencyMatrix[edge.getBeginVertex()][edge.getEndVertex()];
-			System.out.print(beginLabel + "" + endLabel + "" + weight + ",");
-		}
-	}
-
-	String printEdge(Edge edge) {
-		char beginLabel = vertexList[edge.getBeginVertex()].label;
-		char endLabel = vertexList[edge.getEndVertex()].label;
-		int weight = adjacencyMatrix[edge.getBeginVertex()][edge.getEndVertex()];
-		return (beginLabel + "" + endLabel + "" + weight);
-	}
-
-	void printVertices(List<Integer> processedVertices) {
-		System.out.print("\nProcessed Vertices -> ");
-		for (int index : processedVertices) {
-			System.out.print(vertexList[index].label + ",");
-		}
-	}
-
-	void initializeGraphForMSTW() {
-		addVertex('A'); // 0 (start for mst)
-		addVertex('B'); // 1
-		addVertex('C'); // 2
-		addVertex('D'); // 3
-		addVertex('E'); // 4
-		addVertex('F'); // 5
-
-		addWeightedEdge(0, 1, 6); // AB 6
-		addWeightedEdge(0, 3, 4); // AD 4
-		addWeightedEdge(1, 2, 10); // BC 10
-		addWeightedEdge(1, 3, 7); // BD 7
-		addWeightedEdge(1, 4, 7); // BE 7
-		addWeightedEdge(2, 3, 8); // CD 8
-		addWeightedEdge(2, 4, 5); // CE 5
-		addWeightedEdge(2, 5, 6); // CF 6
-		addWeightedEdge(3, 4, 12); // DE 12
-		addWeightedEdge(4, 5, 7); // EF 7
-	}
-
-	void initializeGraphForDijkstra() {
-		addVertex('A'); // 0 (start)
-		addVertex('B'); // 1
-		addVertex('C'); // 2
-		addVertex('D'); // 3
-		addVertex('E'); // 4
-		initDistanceToInfinity();
-		addDirectedWeightedEdge(0, 1, 50); // AB 50
-		addDirectedWeightedEdge(0, 3, 80); // AD 80
-		addDirectedWeightedEdge(1, 2, 60); // BC 60
-		addDirectedWeightedEdge(1, 3, 90); // BD 90
-		addDirectedWeightedEdge(2, 4, 40); // CE 40
-		addDirectedWeightedEdge(3, 2, 20); // DC 20
-		addDirectedWeightedEdge(3, 4, 70); // DE 70
-		addDirectedWeightedEdge(4, 1, 50); // EB 50
-	}
-
-	void initDistanceToInfinity() {
-		for (int startVertex = 0; startVertex < vertexCount; startVertex++) {
-			for (int endVertex = 0; endVertex < vertexCount; endVertex++) {
-				adjacencyMatrix[startVertex][endVertex] = INFINITY;
-			}
-		}
 	}
 
 	/**
@@ -214,6 +120,8 @@ public class WeightedGraph {
 		while (processedVertices.size() < vertexCount) {
 			int minVertex = getMinimumPathVertex(shortestPathArray, processedVertices);
 			int minDistance = shortestPathArray[minVertex].getDistance();
+			System.out.println(
+					"\nMinium Vertex -> " + vertexList[minVertex].label + " Minimum Distance -> " + minDistance);
 			if (minDistance == INFINITY) {
 				break;
 			} else {
@@ -223,11 +131,9 @@ public class WeightedGraph {
 				printPath(shortestPathArray);
 			}
 		}
-		printPath(shortestPathArray);
 	}
 
 	void printPath(DistanceAndParent[] shortestPathArray) {
-		System.out.println();
 		for (int index = 0; index < shortestPathArray.length; index++) {
 			DistanceAndParent dp = shortestPathArray[index];
 			System.out.print(vertexList[index].label + " = " + dp.getDistance() + "("
@@ -339,7 +245,7 @@ public class WeightedGraph {
 					continue;
 				} else if (processedVertices.contains(new Integer(endVertex))) {
 					continue;
-				} else if (adjacencyMatrix[currentVertex][endVertex] == 0) {
+				} else if (adjacencyMatrix[currentVertex][endVertex] == INFINITY) {
 					continue;
 				} else {
 					pQueue.insert(new Edge(currentVertex, endVertex, adjacencyMatrix[currentVertex][endVertex]));
@@ -366,6 +272,96 @@ public class WeightedGraph {
 			e.printStackTrace();
 		}
 		return str.charAt(0);
+	}
+
+	/**
+	 * To add a vertex to a graph, you make a new vertex object with new and
+	 * insert it into your vertex array, vertexList.
+	 * 
+	 * @param label
+	 */
+	void addVertex(char label) {
+		Vertex vertex = new Vertex(label);
+		vertexList[vertexCount++] = vertex;
+	}
+
+	void addWeightedEdge(int vertexIndexA, int vertexIndexB, int weight) {
+		if (vertexIndexA < vertexList.length && vertexIndexB < vertexList.length) {
+			adjacencyMatrix[vertexIndexA][vertexIndexB] = weight;
+			adjacencyMatrix[vertexIndexB][vertexIndexA] = weight;
+			edgeCount += 2;
+		} else {
+			System.out.println("Adjacency Matrix index exceeds max size!!");
+		}
+	}
+
+	void addDirectedWeightedEdge(int vertexIndexA, int vertexIndexB, int weight) {
+		if (vertexIndexA < vertexList.length && vertexIndexB < vertexList.length) {
+			adjacencyMatrix[vertexIndexA][vertexIndexB] = weight;
+			edgeCount += 1;
+		} else {
+			System.out.println("Adjacency Matrix index exceeds max size!!");
+		}
+	}
+
+	void printMinSpanTree(List<Edge> minSpanTreeList) {
+		System.out.print("Weighted Minimum Spanning Tree list -> ");
+		for (Edge edge : minSpanTreeList) {
+			char beginLabel = vertexList[edge.getBeginVertex()].label;
+			char endLabel = vertexList[edge.getEndVertex()].label;
+			int weight = adjacencyMatrix[edge.getBeginVertex()][edge.getEndVertex()];
+			System.out.print(beginLabel + "" + endLabel + "" + weight + ",");
+		}
+	}
+
+	String printEdge(Edge edge) {
+		char beginLabel = vertexList[edge.getBeginVertex()].label;
+		char endLabel = vertexList[edge.getEndVertex()].label;
+		int weight = adjacencyMatrix[edge.getBeginVertex()][edge.getEndVertex()];
+		return (beginLabel + "" + endLabel + "" + weight);
+	}
+
+	void printVertices(List<Integer> processedVertices) {
+		System.out.print("\nProcessed Vertices -> ");
+		for (int index : processedVertices) {
+			System.out.print(vertexList[index].label + ",");
+		}
+	}
+
+	void initializeGraphForMSTW() {
+		addVertex('A'); // 0 (start for mst)
+		addVertex('B'); // 1
+		addVertex('C'); // 2
+		addVertex('D'); // 3
+		addVertex('E'); // 4
+		addVertex('F'); // 5
+
+		addWeightedEdge(0, 1, 6); // AB 6
+		addWeightedEdge(0, 3, 4); // AD 4
+		addWeightedEdge(1, 2, 10); // BC 10
+		addWeightedEdge(1, 3, 7); // BD 7
+		addWeightedEdge(1, 4, 7); // BE 7
+		addWeightedEdge(2, 3, 8); // CD 8
+		addWeightedEdge(2, 4, 5); // CE 5
+		addWeightedEdge(2, 5, 6); // CF 6
+		addWeightedEdge(3, 4, 12); // DE 12
+		addWeightedEdge(4, 5, 7); // EF 7
+	}
+
+	void initializeGraphForDijkstra() {
+		addVertex('A'); // 0 (start)
+		addVertex('B'); // 1
+		addVertex('C'); // 2
+		addVertex('D'); // 3
+		addVertex('E'); // 4
+		addDirectedWeightedEdge(0, 1, 50); // AB 50
+		addDirectedWeightedEdge(0, 3, 80); // AD 80
+		addDirectedWeightedEdge(1, 2, 60); // BC 60
+		addDirectedWeightedEdge(1, 3, 90); // BD 90
+		addDirectedWeightedEdge(2, 4, 40); // CE 40
+		addDirectedWeightedEdge(3, 2, 20); // DC 20
+		addDirectedWeightedEdge(3, 4, 70); // DE 70
+		addDirectedWeightedEdge(4, 1, 50); // EB 50
 	}
 
 }
